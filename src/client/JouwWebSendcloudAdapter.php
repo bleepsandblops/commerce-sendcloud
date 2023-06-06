@@ -92,7 +92,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
         $parcel = $this->client->createParcel(
             $address,
             $servicePointId,
-            (string)$order->getId(),
+            (string)$order->reference,
             $weight,
             $order->reference,
             \JouwWeb\SendCloud\Model\Parcel::CUSTOMS_SHIPMENT_TYPE_COMMERCIAL_GOODS,
