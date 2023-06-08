@@ -63,6 +63,8 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
                 $weight += ($item->qty * $this->getLineItemWeightGrams($item));
             }
         }
+        // Harcoding packaging weight as extra
+        $weight += 150;
         
         $items = [];
         foreach ($order->getLineItems() as $item) {
