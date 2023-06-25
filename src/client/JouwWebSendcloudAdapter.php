@@ -66,6 +66,8 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
                 $weight += ($item->qty * $this->getLineItemWeightGrams($item));
             }
         }
+        // Harcoding packaging weight as extra
+        $weight += 150;
         
         $items = [];
         foreach ($order->getLineItems() as $item) {
@@ -243,7 +245,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             $shippingAddress->getOrganization(),
             $shippingAddress->getAddressLine1(),
             trim($shippingAddress->getAddressLine2()),
-            $shippingAddress->getLocality(),
+            $shippingAddress->getLocality() ?? $shippingAddress->getCountryCode(),
             $shippingAddress->getPostalCode(),
             $shippingAddress->getCountryCode(),
             $order->getEmail(),
