@@ -244,13 +244,13 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             $shippingAddress->fullName ?: $shippingAddress->getGivenName() . ' ' . $shippingAddress->getFamilyName(),
             $shippingAddress->getOrganization(),
             $shippingAddress->getAddressLine1(),
-            trim($shippingAddress->getAddressLine2()),
+            '',
             $shippingAddress->getLocality() ?? $shippingAddress->getCountryCode(),
             $shippingAddress->getPostalCode(),
             $shippingAddress->getCountryCode(),
             $order->getEmail(),
             $phoneNumber ?? null,
-            '',
+            trim($shippingAddress->getAddressLine2()),
             $shippingAddress->getAdministrativeArea()
         );
     }
