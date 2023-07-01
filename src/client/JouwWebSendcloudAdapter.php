@@ -244,7 +244,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             $shippingAddress->fullName ?: $shippingAddress->getGivenName() . ' ' . $shippingAddress->getFamilyName(),
             $shippingAddress->getOrganization(),
             $shippingAddress->getAddressLine1(),
-            $shippingAddress->getFieldValue('houseNumber'),
+            $shippingAddress->getFieldValue('houseNumber') ?? '',
             $shippingAddress->getLocality() ?? $shippingAddress->getCountryCode(),
             $shippingAddress->getPostalCode(),
             $shippingAddress->getCountryCode(),
