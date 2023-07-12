@@ -251,7 +251,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             $order->getEmail(),
             $phoneNumber ?? null,
             trim($shippingAddress->getAddressLine2()),
-            $shippingAddress->getAdministrativeArea()
+            $shippingAddress->getCountryCode() == 'MX' ? null : $shippingAddress->getAdministrativeArea()
         );
     }
 
