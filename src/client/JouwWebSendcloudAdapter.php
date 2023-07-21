@@ -29,6 +29,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
 
     /**
      * JouwWebSendCloudAdapter constructor.
+     *
      * @param Client $client
      */
     public function __construct(private Client $client)
@@ -43,7 +44,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
     public function getParcel(int $parcelId): Parcel
     {
         $parcel = $this->client->getParcel($parcelId);
-        
+
         return (new JouwWebParcelNormalizer())->getParcel($parcel);
     }
 
@@ -68,11 +69,11 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
         }
         // Harcoding packaging weight as extra
         $weight += 150;
-        
+
         $items = [];
         foreach ($order->getLineItems() as $item) {
             $purchasable = $item->getPurchasable();
-            
+
             $parcelItem = new ParcelItem(
                 !empty($item->getDescription()) ? $item->getDescription() : $purchasable->getDescription(),
                 $item->qty,
@@ -103,7 +104,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             Craft::error('Unable to generate Sendcloud order reference for Order ID: ' . $order->getId() . ', with format: ' . $orderNumberTemplate . ', error: ' . $exception->getMessage());
             throw $exception;
         }
-        
+
         $parcel = $this->client->createParcel(
             $address,
             $servicePointId,
@@ -147,12 +148,12 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
         if (!array_key_exists($order->shippingMethodName, $shippingMethods)) {
             throw new \RuntimeException("Could not find Sendcloud shipping method '{$order->shippingMethodName}'.");
         }
-        
+
         $shippingMethodId = $shippingMethods[$order->shippingMethodName]->getId();
-        
+
         $parcel = $this->client->getParcel($parcelId);
         $parcel = $this->client->createLabel($parcel, $shippingMethodId, null);
-        
+
         return (new JouwWebParcelNormalizer())->getParcel($parcel);
     }
 
@@ -217,7 +218,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
         if ($weight <= 0) {
             return 1;
         }
-        
+
         $units = CommercePlugin::getInstance()->getSettings()->weightUnits;
         return match ($units) {
             'g' => $weight,
@@ -251,7 +252,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             $order->getEmail(),
             $phoneNumber ?? null,
             trim($shippingAddress->getAddressLine2()),
-            $shippingAddress->getCountryCode() == 'MX' ? null : $shippingAddress->getAdministrativeArea()
+            in_array($shippingAddress->getCountryCode(), ['MX', 'MY']) ? null : $shippingAddress->getAdministrativeArea()
         );
     }
 
