@@ -252,7 +252,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             $order->getEmail(),
             $phoneNumber ?? null,
             trim($shippingAddress->getAddressLine2()),
-            in_array($shippingAddress->getCountryCode(), ['MX', 'MY']) ? null : $shippingAddress->getAdministrativeArea()
+            in_array($shippingAddress->getCountryCode(), ['MX','MY','IN']) ? null : $shippingAddress->getAdministrativeArea()
         );
     }
 
