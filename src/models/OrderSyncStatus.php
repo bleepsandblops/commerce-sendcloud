@@ -142,6 +142,8 @@ class OrderSyncStatus extends Model
      */
     public const STATUS_SUBMITTING_CANCELLATION_REQUEST = 2001;
 
+    public const STATUS_AT_SORTING_CENTRE = 62990;
+
     /**
      * @var array<int, string>
      */
@@ -171,6 +173,7 @@ class OrderSyncStatus extends Model
         self::STATUS_CANCELLATION_REQUESTED => "Cancellation requested",
         self::STATUS_CANCELLED => "Cancelled",
         self::STATUS_SUBMITTING_CANCELLATION_REQUEST => "Submitting cancellation request",
+        self::STATUS_AT_SORTING_CENTRE => "At sorting centre",
     ];
 
     /** @var integer */
