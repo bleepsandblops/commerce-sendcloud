@@ -168,6 +168,8 @@ final class Parcel
      */
     public const STATUS_SUBMITTING_CANCELLATION_REQUEST = 2001;
 
+    public const STATUS_AT_SORTING_CENTRE = 62990;
+
     /**
      * @var int[]
      */
@@ -197,6 +199,7 @@ final class Parcel
         self::STATUS_CANCELLATION_REQUESTED,
         self::STATUS_CANCELLED,
         self::STATUS_SUBMITTING_CANCELLATION_REQUEST,
+        self::STATUS_AT_SORTING_CENTRE,
     ];
 
     private ?\DateTimeImmutable $created = null;
