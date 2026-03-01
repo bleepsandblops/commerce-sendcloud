@@ -51,6 +51,7 @@ class SendcloudClient extends Component
 
     /**
      * SendcloudClient constructor.
+     *
      * @param string $publicKey
      * @param string $secretKey
      * @param string|null $partnerId
@@ -83,6 +84,7 @@ class SendcloudClient extends Component
 
     /**
      * Update the sendcloud integration
+     *
      * @param Integration $integration
      * @param string $shopName
      * @return bool
@@ -106,6 +108,7 @@ class SendcloudClient extends Component
 
     /**
      * Removes the Sendcloud integration
+     *
      * @param int $integrationId
      * @return bool
      * @throws \GuzzleHttp\Exception\GuzzleException
@@ -132,7 +135,7 @@ class SendcloudClient extends Component
                 $shippingMethodsData = Json::decodeIfJson($response->getBody(), true)['shipping_methods'];
 
                 $shippingMethods = array_map(fn(array $shippingMethodData) => (
-                    ShippingMethod::fromArray($shippingMethodData)
+                ShippingMethod::fromArray($shippingMethodData)
                 ), $shippingMethodsData);
 
                 // Sort shipping methods by carrier and name
@@ -157,6 +160,7 @@ class SendcloudClient extends Component
 
     /**
      * Get a Sendcloud parcel by ID
+     *
      * @param int $parcelId
      * @return Parcel
      * @throws SendcloudRequestException
@@ -174,6 +178,7 @@ class SendcloudClient extends Component
 
     /**
      * Create a Sendcloud parcel
+     *
      * @param Order $order
      * @param int|null $servicePointId
      * @return Parcel
@@ -198,6 +203,7 @@ class SendcloudClient extends Component
 
     /**
      * Update a Sendcloud parcel
+     *
      * @param OrderSyncStatus $orderSyncStatus
      * @param Order $order
      * @return Parcel
@@ -225,6 +231,7 @@ class SendcloudClient extends Component
 
     /**
      * Create a shipping label for a parcel
+     *
      * @param Order $order
      * @param int $parcelId
      * @return Parcel
@@ -258,6 +265,7 @@ class SendcloudClient extends Component
 
     /**
      * Get the shipping label in PDF format
+     *
      * @param Parcel|int $parcel
      * @param LabelFormat|null $format
      * @return string
@@ -448,15 +456,15 @@ class SendcloudClient extends Component
 
         $address = new Address(
             $shippingAddress->fullName ?: $shippingAddress->getGivenName() . ' ' . $shippingAddress->getFamilyName(),
-            $shippingAddress->getAddressLine1(),
+            substr($shippingAddress->getAddressLine1(),0,30),
             $locality,
-            $shippingAddress->getPostalCode(),
+            $shippingAddress->getPostalCode() ?? '',
             $countryCode,
             $shippingAddress->getOrganization(),
-        $shippingAddress->getAddressLine2() ?? '',
-            null,
-        $phoneNumber ?? null,
-            $shippingAddress->getAdministrativeArea(),
+            $shippingAddress->getAddressLine2() ?? '',
+            $shippingAddress->getFieldValue('houseNumber') ?? '',
+            $phoneNumber ?? null,
+            in_array($shippingAddress->getCountryCode(), ['MX', 'MY', 'IN']) ? null : $shippingAddress->getAdministrativeArea()
         );
 
         $addressEvent = new AddressEvent([
