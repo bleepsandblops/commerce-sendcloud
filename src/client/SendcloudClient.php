@@ -357,6 +357,7 @@ class SendcloudClient extends Component
         $address = $this->_createAddress($order);
 
         $weight = $this->_getOrderWeightInKg($order);
+        $weight = $weight + 150;
 
         $items = [];
         $parcelItems = SendcloudPlugin::getInstance()->parcelItems;
