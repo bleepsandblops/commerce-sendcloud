@@ -25,7 +25,7 @@ class Parcel implements Arrayable
 
     private string $email;
 
-    private ShippingMethod $shippingMethod;
+    private ?ShippingMethod $shippingMethod = null;
 
     /**
      * Weight of the parcel in kilograms, if none given the default weight from settings is used. If you provide no weight in your request we’ll use the default weight set in your settings.
