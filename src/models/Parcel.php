@@ -519,7 +519,8 @@ class Parcel implements Arrayable
         $parcel->setCarrier($data['carrier']['code']);
         $parcel->setOrderNumber($data['order_number']);
         $parcel->setToServicePoint($data['to_service_point']);
-        $parcel->setCustomsInvoiceNr($data['customs_invoice_nr']);
+//        $parcel->setCustomsInvoiceNr($data['customs_invoice_nr']);
+        $parcel->setCustomsInvoiceNr($data['order_number']);
         $parcel->setCustomsShipmentType(ShipmentType::tryFrom($data['customs_shipment_type']));
         $parcel->setParcelItems($parcelItems);
         $address = Address::fromParcelData($data);
