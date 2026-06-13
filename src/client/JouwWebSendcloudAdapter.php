@@ -145,7 +145,8 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
     public function createLabel(Order $order, int $parcelId): Parcel
     {
         $shippingMethods = $this->getShippingMethods();
-        if (!array_key_exists($order->shippingMethodName, $shippingMethods)) {
+//        if (!array_key_exists("$order->shippingMethodName", $shippingMethods)) {
+        if (!array_key_exists("FedEx® Regional Economy - incoterm DAP", $shippingMethods)) {
             throw new \RuntimeException("Could not find Sendcloud shipping method '{$order->shippingMethodName}'.");
         }
 
