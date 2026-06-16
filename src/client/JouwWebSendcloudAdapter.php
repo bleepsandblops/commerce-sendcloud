@@ -152,6 +152,8 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
 
         ray($shippingMethods);
         ray($order->shippingMethodName);
+        Craft::warning("[shipping method name] " . $order->shippingMethodName, 'gardners');
+
         $shippingMethodId = $shippingMethods[$order->shippingMethodName]->getId();
 
         $parcel = $this->client->getParcel($parcelId);
