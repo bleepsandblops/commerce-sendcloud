@@ -145,8 +145,8 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
     public function createLabel(Order $order, int $parcelId): Parcel
     {
         $shippingMethods = $this->getShippingMethods();
-//        if (!array_key_exists("$order->shippingMethodName", $shippingMethods)) {
-        if (!array_key_exists("FedEx® Regional Economy - incoterm DAP", $shippingMethods)) {
+        if (!array_key_exists("$order->shippingMethodName", $shippingMethods)) {
+//        if (!array_key_exists("FedEx® Regional Economy - incoterm DAP", $shippingMethods)) {
             throw new \RuntimeException("Could not find Sendcloud shipping method '{$order->shippingMethodName}'.");
         }
 
@@ -247,7 +247,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
         return new Address(
             $shippingAddress->fullName ?: $shippingAddress->getGivenName() . ' ' . $shippingAddress->getFamilyName(),
             $shippingAddress->getOrganization(),
-            substr($shippingAddress->getAddressLine1(),0,30),
+            substr($shippingAddress->getAddressLine1(), 0, 30),
             $shippingAddress->getFieldValue('houseNumber') ?? '',
             $shippingAddress->getLocality() ?? $shippingAddress->getCountryCode(),
             $shippingAddress->getPostalCode() ?? '',
@@ -255,7 +255,7 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             $order->getEmail(),
             $phoneNumber ?? null,
             trim($shippingAddress->getAddressLine2()),
-            in_array($shippingAddress->getCountryCode(), ['MX','MY','IN']) ? null : $shippingAddress->getAdministrativeArea()
+            in_array($shippingAddress->getCountryCode(), ['MX', 'MY', 'IN']) ? null : $shippingAddress->getAdministrativeArea()
         );
     }
 
