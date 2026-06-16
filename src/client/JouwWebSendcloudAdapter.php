@@ -150,6 +150,8 @@ final class JouwWebSendcloudAdapter implements SendcloudInterface
             throw new \RuntimeException("Could not find Sendcloud shipping method '{$order->shippingMethodName}'.");
         }
 
+        ray($shippingMethods);
+        ray($order->shippingMethodName);
         $shippingMethodId = $shippingMethods[$order->shippingMethodName]->getId();
 
         $parcel = $this->client->getParcel($parcelId);
