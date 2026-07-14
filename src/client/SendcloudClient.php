@@ -243,9 +243,9 @@ class SendcloudClient extends Component
     {
         $store = $order->getStore();
         $shippingMethods = $this->getShippingMethods($store->id);
-        if (!array_key_exists($order->shippingMethodName, $shippingMethods)) {
-            throw new \RuntimeException(\Craft::t('commerce-sendcloud', "Could not find Sendcloud shipping method '{method}'", ['method' => $order->shippingMethodName]));
-        }
+//        if (!array_key_exists($order->shippingMethodName, $shippingMethods)) {
+//            throw new \RuntimeException(\Craft::t('commerce-sendcloud', "Could not find Sendcloud shipping method '{method}'", ['method' => $order->shippingMethodName]));
+//        }
         $status = SendcloudPlugin::getInstance()->orderSync->getOrCreateOrderSyncStatus($order);
         $parcel = $this->_createParcelData($order, $status->getServicePointId(), requestLabel: true);
         $parcel['id'] = $parcelId;
@@ -414,10 +414,20 @@ class SendcloudClient extends Component
         $parcel->setWeight($weight);
         $parcel->setParcelItems($items);
 
-        $sendcloudShippingMethod = $this->getShippingMethods($store->id)[$order->shippingMethodName] ?? null;
+
+        $shippingMethodName = '';
+        foreach ($order->adjusters as $adjuster) {
+            if ($adjuster->type === 'shipping') {
+                $shippingMethodName = $adjuster->name;
+            }
+        }
+//        $sendcloudShippingMethod = $this->getShippingMethods($store->id)[$order->shippingMethodName] ?? null;
+        $sendcloudShippingMethod = $this->getShippingMethods($store->id)[$shippingMethodName] ?? null;
+
         if ($sendcloudShippingMethod) {
             $parcel->setShippingMethod($sendcloudShippingMethod);
-            $parcel->setShippingMethodCheckoutName($order->shippingMethodName);
+//            $parcel->setShippingMethodCheckoutName($order->shippingMethodName);
+            $parcel->setShippingMethodCheckoutName($shippingMethodName);
             if ($sendcloudShippingMethod->isServicePointInputRequired()) {
                 $parcel->setToServicePoint($servicePointId);
             }
@@ -456,7 +466,7 @@ class SendcloudClient extends Component
 
         $address = new Address(
             $shippingAddress->fullName ?: $shippingAddress->getGivenName() . ' ' . $shippingAddress->getFamilyName(),
-            substr($shippingAddress->getAddressLine1(),0,30),
+            substr($shippingAddress->getAddressLine1(), 0, 30),
             $locality,
             $shippingAddress->getPostalCode() ?? '',
             $countryCode,
