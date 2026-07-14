@@ -417,7 +417,7 @@ class SendcloudClient extends Component
 
         $shippingMethodName = '';
         foreach ($order->adjusters as $adjuster) {
-            if ($adjuster->type === 'shipping') {
+            if (($adjuster->type === 'shipping') && ($adjuster->name != 'Fuel surcharge')) {
                 $shippingMethodName = $adjuster->name;
             }
         }
