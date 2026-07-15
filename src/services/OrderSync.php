@@ -171,10 +171,17 @@ class OrderSync extends Component
                 $status = $this->getOrderSyncStatusByOrderId($order->getId());
                 $isSendcloudShipping = false;
 
+                $shippingMethodName = '';
+                foreach ($order->adjustments as $adjuster) {
+                    if (($adjuster->type === 'shipping') && ($adjuster->name != 'Fuel surcharge') && !(str_contains($adjuster->name, 'Year of Reading'))) {
+                        $shippingMethodName = $adjuster->name;
+                    }
+                }
+
                 if ($status && $status->servicePoint) {
                     foreach ($this->sendcloudApi->getClient()->getShippingMethods($store->id) as $method) {
                         // Find the matching sendcloud shipping
-                        if ($method->getName() == $order->shippingMethodName) {
+                        if ($method->getName() == $shippingMethodName) {
                             $isSendcloudShipping = true;
                             if (!$method->isServicePointInputRequired()) {
                                 // remove the servicePoint info
