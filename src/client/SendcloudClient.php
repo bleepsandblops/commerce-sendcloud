@@ -470,8 +470,8 @@ class SendcloudClient extends Component
             $locality,
             $shippingAddress->getPostalCode() ?? '',
             $countryCode,
-            $shippingAddress->getOrganization(),
-            $shippingAddress->getAddressLine2() ?? '',
+            substr($shippingAddress->getOrganization(), 0, 30),
+            substr($shippingAddress->getAddressLine2(), 0, 30) ?? '',
             $shippingAddress->getFieldValue('houseNumber') ?? '',
             $phoneNumber ?? null,
             in_array($shippingAddress->getCountryCode(), ['MX', 'MY', 'IN']) ? null : $shippingAddress->getAdministrativeArea()
