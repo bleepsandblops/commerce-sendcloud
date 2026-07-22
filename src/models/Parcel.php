@@ -567,7 +567,7 @@ class Parcel implements Arrayable
             'customs_invoice_nr' => 'customsInvoiceNr',
             'customs_shipment_type' => fn(Parcel $parcel) => $parcel->getCustomsShipmentType()->value,
             'export_type' => 'exportType',
-            'customsDetails' => fn(Parcel $parcel) => $parcel->getCustomsDetails(),
+            'customs_information' => fn(Parcel $parcel) => $parcel->getCustomsDetails(),
             'reference',
             'external_reference' => 'externalReference',
             'parcel_items' => fn(Parcel $parcel) => $parcel->getParcelItems(),
