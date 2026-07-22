@@ -55,6 +55,7 @@ class Parcel implements Arrayable
 
     private ShipmentType $customsShipmentType = ShipmentType::CommercialGoods;
 
+    private array $customsDetails = [];
     private ?string $reference = null;
 
     private ?string $externalReference = null;
@@ -271,6 +272,19 @@ class Parcel implements Arrayable
     {
         $this->customsShipmentType = $customsShipmentType;
     }
+
+
+    public function getCustomsDetails(): array
+    {
+        return $this->customsDetails;
+    }
+
+    public function setCustomsDetails(array $customsDetails): void
+    {
+        $this->customsDetails = $customsDetails;
+    }
+
+
 
     public function getReference(): string
     {
@@ -553,6 +567,7 @@ class Parcel implements Arrayable
             'customs_invoice_nr' => 'customsInvoiceNr',
             'customs_shipment_type' => fn(Parcel $parcel) => $parcel->getCustomsShipmentType()->value,
             'export_type' => 'exportType',
+            'customsDetails' => fn(Parcel $parcel) => $parcel->getCustomsDetails(),
             'reference',
             'external_reference' => 'externalReference',
             'parcel_items' => fn(Parcel $parcel) => $parcel->getParcelItems(),

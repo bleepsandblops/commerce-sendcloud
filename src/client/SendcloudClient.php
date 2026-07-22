@@ -414,6 +414,10 @@ class SendcloudClient extends Component
         $parcel->setWeight($weight);
         $parcel->setParcelItems($items);
 
+        $parcel->setCustomsDetails([
+            'export_type' => 'commercial_b2c'
+        ]);
+
 
         $shippingMethodName = '';
         foreach ($order->adjustments as $adjuster) {
