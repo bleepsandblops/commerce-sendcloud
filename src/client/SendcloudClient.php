@@ -418,7 +418,7 @@ class SendcloudClient extends Component
             'export_type' => 'commercial_b2c',
             'customs_invoice_nr' => $order->reference,
             'customs_shipment_type' => 2,
-            'invoice_date' => $order->dateCreated->format('c'),
+            'invoice_date' => $order->dateCreated->format('Y-m-d'),
             'freight_costs' => round($order->totalShippingCost, 2)
         ]);
 
