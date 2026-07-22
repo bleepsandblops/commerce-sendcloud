@@ -483,6 +483,7 @@ class OrderSync extends Component
                 ],
             ];
         }
+        ray($totalWeight);
 
 
         $shippingMethodName = '';
