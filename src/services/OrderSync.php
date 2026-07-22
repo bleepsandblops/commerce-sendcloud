@@ -472,7 +472,7 @@ class OrderSync extends Component
 
         $shippingDetails['delivery_indicator'] = $order->shippingMethodHandle;
         $totalWeight = $order->getTotalWeight();
-        $totalWeight = $totalWeight + 0.150;
+        $totalWeight = $totalWeight + 150;
         if ($totalWeight > 0) {
             $shippingDetails = [
                 'measurement' => [
