@@ -51,6 +51,7 @@ class Parcel implements Arrayable
     private ?int $senderAddress = null;
 
     private string $customsInvoiceNr = '';
+    private string $exportType = 'commercial_b2c';
 
     private ShipmentType $customsShipmentType = ShipmentType::CommercialGoods;
 
