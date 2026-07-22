@@ -433,7 +433,7 @@ class SendcloudClient extends Component
             }
         }
 
-        $parcel->setCustomsInvoiceNumber($order->reference);
+        $parcel->setCustomsInvoiceNr($order->reference);
 
         $parcel->setTotalOrderValue((string)$order->getTotalPaid());
         $parcel->setTotalOrderValueCurrency($order->getPaymentCurrency());
