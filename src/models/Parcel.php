@@ -552,6 +552,7 @@ class Parcel implements Arrayable
             'weight',
             'customs_invoice_nr' => 'customsInvoiceNr',
             'customs_shipment_type' => fn(Parcel $parcel) => $parcel->getCustomsShipmentType()->value,
+            'export_type' => 'exportType',
             'reference',
             'external_reference' => 'externalReference',
             'parcel_items' => fn(Parcel $parcel) => $parcel->getParcelItems(),
