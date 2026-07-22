@@ -516,7 +516,13 @@ class OrderSync extends Component
                 ]);
             }
         }
+        if ($servicePointId && $order->orderType->value == 'relay') {
+            $sendcloudOrder->setServicePointDetails([
+                'id' => $servicePointId,
+            ]);
+        }
         $sendcloudOrder->setShippingDetails($shippingDetails);
+        ray($sendcloudOrder);
 
         return $sendcloudOrder;
     }
