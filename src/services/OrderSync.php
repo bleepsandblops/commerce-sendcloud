@@ -201,27 +201,36 @@ class OrderSync extends Component
                     }
                 }
 
-                if ($status && $status->servicePoint) {
-                    foreach ($this->sendcloudApi->getClient()->getShippingOptions($store) as $method) {
-                        // Find the matching sendcloud shipping
-                        if ($method->getName() == $shippingMethodName) {
-                            $isSendcloudShipping = true;
-                            if (!$method->isServicePointInputRequired()) {
-                                // remove the servicePoint info
-                                $status->servicePoint = null;
-                                $this->saveOrderSyncStatus($status);
-                            }
-
-                            break;
-                        }
-                    }
-
-                    if (!$isSendcloudShipping) {
-                        // remove the servicePoint info
-                        $status->servicePoint = null;
-                        $this->saveOrderSyncStatus($status);
-                    }
+                if ($order->orderType->value == 'relay') {
+                    $isSendcloudShipping = true;
                 }
+                if (!$isSendcloudShipping) {
+                    // remove the servicePoint info
+                    $status->servicePoint = null;
+                    $this->saveOrderSyncStatus($status);
+                }
+
+//                if ($status && $status->servicePoint) {
+//                    foreach ($this->sendcloudApi->getClient()->getShippingOptions($store) as $method) {
+//                        // Find the matching sendcloud shipping
+//                        if ($method->getName() == $shippingMethodName) {
+//                            $isSendcloudShipping = true;
+//                            if (!$method->isServicePointInputRequired()) {
+//                                // remove the servicePoint info
+//                                $status->servicePoint = null;
+//                                $this->saveOrderSyncStatus($status);
+//                            }
+//
+//                            break;
+//                        }
+//                    }
+//
+//                    if (!$isSendcloudShipping) {
+//                        // remove the servicePoint info
+//                        $status->servicePoint = null;
+//                        $this->saveOrderSyncStatus($status);
+//                    }
+//                }
             }
         );
     }
