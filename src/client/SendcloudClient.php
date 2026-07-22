@@ -415,7 +415,11 @@ class SendcloudClient extends Component
         $parcel->setParcelItems($items);
 
         $parcel->setCustomsDetails([
-            'export_type' => 'commercial_b2c'
+            'export_type' => 'commercial_b2c',
+            'customs_invoice_nr' => $order->reference,
+            'customs_shipment_type' => 2,
+            'invoice_date' => $order->dateCreated->format('c'),
+            'freight_costs' => round($order->totalShippingCost, 2)
         ]);
 
 
