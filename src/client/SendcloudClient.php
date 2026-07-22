@@ -174,7 +174,7 @@ class SendcloudClient extends Component
     {
         $integration = SendcloudPlugin::getInstance()->integrations->getIntegrationByStoreId($order->storeId);
         $response = $this->createLabels(
-            [$order->number],
+            [$order->id],
             $integration->externalId,
             SendcloudPlugin::getInstance()->getSettings()->isApplyShippingRules(),
         );
@@ -230,7 +230,7 @@ class SendcloudClient extends Component
                     RequestOptions::JSON => [
                         'integration_id' => $integration->externalId,
                         'order' => [
-                            'order_id' => $order->number,
+                            'order_id' => $order->id,
                             'apply_shipping_rules' => SendcloudPlugin::getInstance()->getSettings()->isApplyShippingRules(),
                         ],
                     ],

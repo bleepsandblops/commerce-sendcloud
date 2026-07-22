@@ -1,7 +1,7 @@
 
-<div class="order-meta-container">
+<div class="order-meta-container"  style="margin-top:20px;">
     <div class="meta read-only">
-        <h4>{{ "Sendcloud"|t('commerce-sendcloud') }}</h4>
+        <h4 style="margin-bottom:4px; margin-left:-1.5rem; padding-left:6px; padding-inline: var(--m) 0;">{{ "Sendcloud"|t('commerce-sendcloud') }}</h4>
 
         {% if status and status.parcelId %}
             <div class="data">
@@ -56,12 +56,12 @@
                 ] %}
                 <p class="value infoRow error" data-info="{{ info|json_encode }}">
                     {{ status.lastError|truncate(25) }}
-                    <span class="tableRowInfo" data-icon="info"></span>
+                    <span class="tableRowInfo" style="margin-left:5px;" data-icon="info"></span>
                 </p>
             </div>
         {% endif %}
 
-        <div class="sendcloud-actions">
+        <div class="sendcloud-actions" style="margin-left:-1.5rem; padding-left:6px; padding-inline: var(--m) 0;">
             {% if order.isCompleted %}
                 {% if currentUser.can('commerce-sendcloud-pushOrders') %}
                     <button type="button" class="sendcloud-order-action btn-default btn" data-action="commerce-sendcloud/cp/order/push" data-order-id="{{ order.Id }}">
