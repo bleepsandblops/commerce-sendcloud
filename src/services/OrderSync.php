@@ -472,6 +472,7 @@ class OrderSync extends Component
 
         $shippingDetails['delivery_indicator'] = $order->shippingMethodHandle;
         $totalWeight = $order->getTotalWeight();
+        $totalWeight = $totalWeight + 0.150;
         if ($totalWeight > 0) {
             $shippingDetails = [
                 'measurement' => [
@@ -554,15 +555,15 @@ class OrderSync extends Component
         }
         $sendcloudAddress = new \white\commerce\sendcloud\models\Address(
             name: $address->fullName ?: $address->getGivenName() . ' ' . $address->getFamilyName(),
-            addressLine1: $address->getAddressLine1(),
+            addressLine1: substr($address->getAddressLine1(),0,30),
             postalCode: $address->getPostalCode(),
             city: $locality,
             countryCode: $countryCode,
-            companyName: $address->getOrganization(),
-            houseNumber: null,
-            addressLine2: $address->getAddressLine2(),
+            companyName: substr($address->getOrganization(),0,30),
+            houseNumber: $address->getFieldValue('houseNumber') ?? '',
+            addressLine2: substr($address->getAddressLine2(),0,30),
             poBox: null,
-            stateProvinceCode: $address->getAdministrativeArea(),
+            stateProvinceCode: in_array($address->getCountryCode(), ['MX', 'MY', 'IN']) ? null : $address->getAdministrativeArea(),
             email: $email,
             phoneNumber: $phoneNumber ?? null,
         );
