@@ -354,12 +354,12 @@ class OrderSync extends Component
             return false;
         }
 
-        $store = $order->getStore();
-        $client = $this->sendcloudApi->getClient($store->id);
-        if (!isset($client->getShippingMethods($store->id)[$order->shippingMethodName])) {
-            SendcloudPlugin::getInstance()->log("Sendcloud shipping method not found", Logger::LEVEL_WARNING);
-            return false;
-        }
+//        $store = $order->getStore();
+//        $client = $this->sendcloudApi->getClient($store->id);
+//        if (!isset($client->getShippingMethods($store->id)[$order->shippingMethodName])) {
+//            SendcloudPlugin::getInstance()->log("Sendcloud shipping method not found", Logger::LEVEL_WARNING);
+//            return false;
+//        }
         
         return true;
     }
