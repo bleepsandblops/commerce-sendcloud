@@ -194,10 +194,17 @@ class OrderSync extends Component
                 $status = $this->getOrderSyncStatusByOrderId($order->getId());
                 $isSendcloudShipping = false;
 
+                $shippingMethodName = '';
+                foreach ($order->adjustments as $adjuster) {
+                    if (($adjuster->type === 'shipping') && ($adjuster->name != 'Fuel surcharge') && !(str_contains($adjuster->name, 'Year of Reading'))) {
+                        $shippingMethodName = $adjuster->name;
+                    }
+                }
+
                 if ($status && $status->servicePoint) {
                     foreach ($this->sendcloudApi->getClient()->getShippingOptions($store) as $method) {
                         // Find the matching sendcloud shipping
-                        if ($method->getName() == $order->shippingMethodName) {
+                        if ($method->getName() == $shippingMethodName) {
                             $isSendcloudShipping = true;
                             if (!$method->isServicePointInputRequired()) {
                                 // remove the servicePoint info
@@ -407,6 +414,8 @@ class OrderSync extends Component
         $orderDetails->setUpdatedAt($order->dateUpdated);
         $orderDetails->setOrderItems($orderItems);
 
+
+
         if ($this->hasEventHandlers(self::EVENT_CREATE_ORDER_DETAILS)) {
             $this->trigger(self::EVENT_CREATE_ORDER_DETAILS, new OrderDetailsEvent([
                 'orderDetails' => $orderDetails,
@@ -428,15 +437,31 @@ class OrderSync extends Component
         $totalPrice = new Price($order->getTotalPrice(), $order->getPaymentCurrency());
 
         $sendcloudOrder = Craft::createObject(SendcloudOrder::class);
-        $sendcloudOrder->setOrderId($order->number);
+        $sendcloudOrder->setOrderId($order->id);
         $sendcloudOrder->setOrderNumber($orderNumber);
         $sendcloudOrder->setOrderDetails($orderDetails);
+
+        $shippingPrice = new Price($order->getTotalShippingCost(), $order->getPaymentCurrency());
+        $zeroPrice = new Price(0, $order->getPaymentCurrency());
+
         $sendcloudOrder->setPaymentDetails([
             'total_price' => $totalPrice->toArray(),
+            'freight_costs' => $shippingPrice->toArray(),
+            'insurance_costs' => $zeroPrice->toArray(),
+            'discount_granted' => $zeroPrice->toArray(),
+            'other_costs' => $zeroPrice->toArray(),
+            'invoice_date' => $order->dateCreated->format('Y-m-d'),
             'status' => [
                 'code' => $order->getPaidStatus(),
             ],
         ]);
+
+        $sendcloudOrder->setCustomsDetails([
+            'export_type' => 'commercial_b2c',
+            'commercial_invoice_number' => $order->reference,
+            'shipment_type' => 'commercial_goods'
+        ]);
+
 
         $shippingAddress = $this->_createAddress($order->getShippingAddress(), $order->getEmail());
         $sendcloudOrder->setShippingAddress($shippingAddress);
@@ -458,7 +483,15 @@ class OrderSync extends Component
             ];
         }
 
-        $sendcloudShippingOption = $this->sendcloudApi->getClient($store->id)->getShippingOptions($store)[$order->shippingMethodName] ?? null;
+
+        $shippingMethodName = '';
+        foreach ($order->adjustments as $adjuster) {
+            if (($adjuster->type === 'shipping') && ($adjuster->name != 'Fuel surcharge') && !(str_contains($adjuster->name, 'Year of Reading'))) {
+                $shippingMethodName = $adjuster->name;
+            }
+        }
+        $sendcloudShippingOption = $this->sendcloudApi->getClient($store->id)->getShippingOptions($store)[$shippingMethodName] ?? null;
+
         if ($sendcloudShippingOption) {
             $shippingDetails['ship_with'] = [
                 'type' => 'shipping_option_code',
@@ -496,11 +529,11 @@ class OrderSync extends Component
 
         $store = $order->getStore();
         $client = $this->sendcloudApi->getClient($store->id);
-        $settings = SendcloudPlugin::getInstance()->getSettings();
-        if ($settings->isSkipUnmappedShippingMethods() && !isset($client->getShippingOptions($store)[$order->shippingMethodName])) {
-            SendcloudPlugin::getInstance()->log("Sendcloud shipping method not found", Logger::LEVEL_WARNING);
-            return false;
-        }
+//        $settings = SendcloudPlugin::getInstance()->getSettings();
+//        if ($settings->isSkipUnmappedShippingMethods() && !isset($client->getShippingOptions($store)[$order->shippingMethodName])) {
+//            SendcloudPlugin::getInstance()->log("Sendcloud shipping method not found", Logger::LEVEL_WARNING);
+//            return false;
+//        }
 
         return true;
     }
