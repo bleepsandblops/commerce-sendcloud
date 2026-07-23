@@ -624,12 +624,13 @@ class OrderSync extends Component
 
             $response = $client->getShipmentFromOrder($order);
 
+            return $response;
 //            $responseShipment = $client->getShipment($response['shipment_id']);
 
 //            $this->saveOrderSyncStatus($status);
         } catch (Exception $exception) {
-            $status->lastError = $exception instanceof SendCloudRequestException ? $exception->getSendCloudMessage() : $exception->getMessage();
-
+//            $status->lastError = $exception instanceof SendCloudRequestException ? $exception->getSendCloudMessage() : $exception->getMessage();
+return false;
         }
     }
 }
