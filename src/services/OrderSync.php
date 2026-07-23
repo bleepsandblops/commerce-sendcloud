@@ -211,7 +211,7 @@ class OrderSync extends Component
                 if ($order->orderType->value == 'relay') {
                     $isSendcloudShipping = true;
                 }
-                if (!$isSendcloudShipping) {
+                if ((!$isSendcloudShipping) && ($status)) {
                     // remove the servicePoint info
                     $status->servicePoint = null;
                     $this->saveOrderSyncStatus($status);
