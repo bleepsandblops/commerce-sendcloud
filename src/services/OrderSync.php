@@ -362,6 +362,9 @@ class OrderSync extends Component
                 $status->trackingUrl = $response['tracking_url'];
             }
             $status->lastError = null;
+
+            $responseShipment = $client->getShipment($response['shipment_id']);
+            ray($responseShipment);
             if (!$this->saveOrderSyncStatus($status)) {
                 throw new \RuntimeException("Could not save order sync status: " . VarDumper::dumpAsString($status->getErrors()));
             }
@@ -612,5 +615,21 @@ class OrderSync extends Component
         }
 
         return null;
+    }
+
+    public function getOrderTrackingNumber($order) {
+        try {
+            $store = $order->getStore();
+            $client = $this->sendcloudApi->getClient($store->id);
+
+            $response = $client->getShipmentFromOrder($order);
+
+//            $responseShipment = $client->getShipment($response['shipment_id']);
+
+//            $this->saveOrderSyncStatus($status);
+        } catch (Exception $exception) {
+            $status->lastError = $exception instanceof SendCloudRequestException ? $exception->getSendCloudMessage() : $exception->getMessage();
+
+        }
     }
 }

@@ -182,6 +182,40 @@ class SendcloudClient extends Component
         return $response['data'][0] ?? null;
     }
 
+
+    public function getShipment($shipmentId): ?array
+    {
+        ray('i get ship');
+        try {
+            $response = $this->guzzleClient->get('shipments/' . $shipmentId);
+            ray($response);
+//            return Json::decodeIfJson($response->getBody());
+            return $response['data']['parcels'][0] ?? null;
+        } catch (RequestException $exception) {
+            ray($exception->getResponse());
+            if ($exception->getResponse() && $exception->getResponse()->getStatusCode() === 404) {
+                return null;
+            }
+        }
+    }
+
+    public function getShipmentFromOrder($order): ?array
+    {
+        $orderNumber = $order->reference;
+        ray($orderNumber);
+        try {
+            $response = $this->guzzleClient->get('shipments?order_number=' . $orderNumber);
+            ray($response);
+//            return Json::decodeIfJson($response->getBody());
+            return $response['data']['parcels'][0] ?? null;
+        } catch (RequestException $exception) {
+            ray($exception->getResponse());
+            if ($exception->getResponse() && $exception->getResponse()->getStatusCode() === 404) {
+                return null;
+            }
+        }
+    }
+
     /**
      * Create shipping labels for multiple orders.
      * @param string[] $orderNumbers
