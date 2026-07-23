@@ -6,7 +6,8 @@
         {% if status and status.parcelId %}
             <div class="data">
                 <h5 class="heading">{{ "Parcel Number"|t('commerce-sendcloud') }}</h5>
-                <p class="value">{{ status.parcelId }}</p>
+                <p class="value">
+                    <a href="https://app.sendcloud.com/v2/shipping/{{ status.parcelId }}/details">{{ status.parcelId }}</a></p>
             </div>
             <div class="data">
                 <h5 class="heading">{{ "Status"|t('commerce-sendcloud') }}</h5>

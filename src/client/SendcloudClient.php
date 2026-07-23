@@ -125,7 +125,7 @@ class SendcloudClient extends Component
                 $shippingOptionsData = Json::decodeIfJson($response->getBody(), true)['data'];
 
                 $shippingOptions = array_map(fn(array $shippingOptionData) => (
-                    ShippingOption::fromArray($shippingOptionData)
+                ShippingOption::fromArray($shippingOptionData)
                 ), $shippingOptionsData);
 
                 // Sort shipping methods by carrier and name
@@ -190,7 +190,8 @@ class SendcloudClient extends Component
             $response = $this->guzzleClient->get('shipments/' . $shipmentId);
             ray($response);
 //            return Json::decodeIfJson($response->getBody());
-            return $response['data']['parcels'][0] ?? null;
+            $responseDecoded = Json::decodeIfJson($response->getBody());
+            return $responseDecoded['data']['parcels'][0] ?? null;
         } catch (RequestException $exception) {
             ray($exception->getResponse());
             if ($exception->getResponse() && $exception->getResponse()->getStatusCode() === 404) {
@@ -199,15 +200,14 @@ class SendcloudClient extends Component
         }
     }
 
-    public function getShipmentFromOrder($order): ?array
+    public function getShipmentsFromParcelIds($parcelIdList): ?array
     {
-        $orderNumber = $order->reference;
-        ray($orderNumber);
         try {
-            $response = $this->guzzleClient->get('shipments?order_number=' . $orderNumber);
-            ray($response);
+            $response = $this->guzzleClient->get('shipments?ids=' . $parcelIdList);
 //            return Json::decodeIfJson($response->getBody());
-            return $response['data']['parcels'][0] ?? null;
+            $responseDecoded = Json::decodeIfJson($response->getBody());
+            ray($responseDecoded);
+            return $responseDecoded['data'] ?? null;
         } catch (RequestException $exception) {
             ray($exception->getResponse());
             if ($exception->getResponse() && $exception->getResponse()->getStatusCode() === 404) {

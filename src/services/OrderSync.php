@@ -18,6 +18,7 @@ use craft\errors\SiteNotFoundException;
 use craft\events\ModelEvent;
 use craft\helpers\Queue;
 use Exception;
+use white\commerce\sendcloud\enums\ParcelStatus;
 use white\commerce\sendcloud\events\AddressEvent;
 use white\commerce\sendcloud\events\OrderDetailsEvent;
 use white\commerce\sendcloud\events\ValidateOrderEvent;
@@ -57,6 +58,7 @@ class OrderSync extends Component
 
     /**
      * Gets order synchronization status based on Craft order ID.
+     *
      * @param int $orderId
      * @return OrderSyncStatus|null
      */
@@ -74,6 +76,7 @@ class OrderSync extends Component
 
     /**
      * Gets order synchronization status based on Sendcloud parcel ID.
+     *
      * @param int $parcelId
      * @return OrderSyncStatus|null
      */
@@ -91,6 +94,7 @@ class OrderSync extends Component
 
     /**
      * Gets the order synchronization status or creates a new status if couldn't find any existing one.
+     *
      * @param Order $order
      * @return OrderSyncStatus
      */
@@ -106,6 +110,7 @@ class OrderSync extends Component
 
     /**
      * Saves the order synchronization status.
+     *
      * @param OrderSyncStatus $model
      * @param bool $runValidation
      * @return bool
@@ -147,6 +152,7 @@ class OrderSync extends Component
 
     /**
      * Deletes order status.
+     *
      * @param int $id
      * @return bool
      */
@@ -157,6 +163,7 @@ class OrderSync extends Component
 
     /**
      * Registers Craft event listeners required for order synchronization.
+     *
      * @return void
      */
     public function registerEventListeners(): void
@@ -237,6 +244,7 @@ class OrderSync extends Component
 
     /**
      * Synchronizes the order with Sendcloud according to the mapping defined in the plugin settings.
+     *
      * @param Order $order
      * @return void
      * @throws Exception
@@ -285,6 +293,7 @@ class OrderSync extends Component
 
     /**
      * Pushes the order to Sendcloud that hasn't been pushed yet.
+     *
      * @param Order $order
      * @param bool $force
      * @return bool
@@ -319,7 +328,8 @@ class OrderSync extends Component
             $this->saveOrderSyncStatus($status);
 
             return false;
-        } finally {
+        }
+        finally {
             $mutex->release($lockName);
         }
 
@@ -373,7 +383,8 @@ class OrderSync extends Component
             $this->saveOrderSyncStatus($status);
 
             return false;
-        } finally {
+        }
+        finally {
             $mutex->release($lockName);
         }
 
@@ -425,7 +436,6 @@ class OrderSync extends Component
         $orderDetails->setCreatedAt($order->dateOrdered);
         $orderDetails->setUpdatedAt($order->dateUpdated);
         $orderDetails->setOrderItems($orderItems);
-
 
 
         if ($this->hasEventHandlers(self::EVENT_CREATE_ORDER_DETAILS)) {
@@ -574,13 +584,13 @@ class OrderSync extends Component
         }
         $sendcloudAddress = new \white\commerce\sendcloud\models\Address(
             name: $address->fullName ?: $address->getGivenName() . ' ' . $address->getFamilyName(),
-            addressLine1: substr($address->getAddressLine1(),0,30),
+            addressLine1: substr($address->getAddressLine1(), 0, 30),
             postalCode: $address->getPostalCode(),
             city: $locality,
             countryCode: $countryCode,
-            companyName: substr($address->getOrganization(),0,30),
+            companyName: substr($address->getOrganization(), 0, 30),
             houseNumber: $address->getFieldValue('houseNumber') ?? '',
-            addressLine2: substr($address->getAddressLine2(),0,30),
+            addressLine2: substr($address->getAddressLine2(), 0, 30),
             poBox: null,
             stateProvinceCode: in_array($address->getCountryCode(), ['MX', 'MY', 'IN']) ? null : $address->getAdministrativeArea(),
             email: $email,
@@ -617,20 +627,35 @@ class OrderSync extends Component
         return null;
     }
 
-    public function getOrderTrackingNumber($order) {
+    public function getOrderTrackingNumber($parcelIdList)
+    {
         try {
-            $store = $order->getStore();
-            $client = $this->sendcloudApi->getClient($store->id);
+            ray('hello');
+            $client = $this->sendcloudApi->getClient();
+            ray($parcelIdList);
+            $shipments = $client->getShipmentsFromParcelIds($parcelIdList);
+            foreach ($shipments as $shipment) {
+                $order = Order::find()->reference($shipment['order_number'])->one();
+                $status = $this->getOrCreateOrderSyncStatus($order);
+                $parcel = $shipment['parcels'][0];
+                $status->trackingNumber = $parcel['tracking_number'];
+                $status->trackingUrl = $parcel['tracking_url'];
+                $status->carrier = $shipment['carrier']['code'];
+//                $parcelStatus = constant(ParcelStatus::class .'::'. $parcel['status']['code']);
 
-            $response = $client->getShipmentFromOrder($order);
+//                $status->parcelId = $parcelId;
+                $status->parcelStatus = constant(ParcelStatus::class . '::' . $parcel['status']['code']);
 
+                $this->saveOrderSyncStatus($status);
+            }
+            ray($response);
             return $response;
 //            $responseShipment = $client->getShipment($response['shipment_id']);
 
 //            $this->saveOrderSyncStatus($status);
         } catch (Exception $exception) {
 //            $status->lastError = $exception instanceof SendCloudRequestException ? $exception->getSendCloudMessage() : $exception->getMessage();
-return false;
+            return false;
         }
     }
 }
