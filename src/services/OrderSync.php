@@ -421,7 +421,7 @@ class OrderSync extends Component
 
             $params = [
                 'hsCode' => $hsSystemCode ?? null,
-                'originCountry' => $originCountryCode ?? 'FR',
+                'countryOfOrigin' => $originCountryCode ?? 'FR',
             ];
             $orderItems[] = $orderItemService->createFromLineItem($lineItem, $params);
         }
@@ -509,13 +509,23 @@ class OrderSync extends Component
 
 
         $shippingMethodName = '';
+
         foreach ($order->adjustments as $adjuster) {
             if (($adjuster->type === 'shipping') && ($adjuster->name != 'Fuel surcharge') && !(str_contains($adjuster->name, 'Year of Reading'))) {
                 $shippingMethodName = $adjuster->name;
             }
         }
-        $sendcloudShippingOption = $this->sendcloudApi->getClient($store->id)->getShippingOptions($store)[$shippingMethodName] ?? null;
 
+        if (($order->orderType->value == 'relay') && ($order->shippingAddress->countryCode != 'FR')) {
+            $shippingMethodName = 'Mondial Relay Home International';
+        } elseif (($order->orderType->value == 'relay') && ($order->shippingAddress->countryCode == 'FR')) {
+            $shippingMethodName = 'Mondial Relay Point Relais';
+        } elseif (($order->orderType->value == 'delivery') && ($order->shippingAddress->countryCode == 'FR')) {
+            $shippingMethodName = 'Colissimo Home Signature';
+        }
+        ray($shippingMethodName);
+        $sendcloudShippingOption = $this->sendcloudApi->getClient($store->id)->getShippingOptions($store)[$shippingMethodName] ?? null;
+        ray($sendcloudShippingOption);
         if ($sendcloudShippingOption) {
             $shippingDetails['ship_with'] = [
                 'type' => 'shipping_option_code',
@@ -529,6 +539,23 @@ class OrderSync extends Component
                 ]);
             }
         }
+
+//        if (str_contains($order->shippingMethodHandle, 'colissimo')) {
+//            $shippingDetails['ship_with'] = [
+//                'type' => 'shipping_option_code',
+//                'properties' => [
+//                    'shipping_option_code' => 'colissimo:home/signature,fr',
+//                ],
+//            ];
+//        } elseif (($order->orderType->value == 'relay') && ($order->shippingAddress->countryCode != 'FR')) {
+//            $shippingDetails['ship_with'] = [
+//                'type' => 'shipping_option_code',
+//                'properties' => [
+//                    'shipping_option_code' => 'mondial_relay:service_point,international_dualapi/c2c',
+//                ],
+//            ];
+//        }
+
         if ($servicePointId && $order->orderType->value == 'relay') {
             $sendcloudOrder->setServicePointDetails([
                 'id' => $servicePointId,
