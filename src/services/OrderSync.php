@@ -421,7 +421,7 @@ class OrderSync extends Component
 
             $params = [
                 'hsCode' => $hsSystemCode ?? null,
-                'originCountry' => $originCountryCode ?? null,
+                'originCountry' => $originCountryCode ?? 'FR',
             ];
             $orderItems[] = $orderItemService->createFromLineItem($lineItem, $params);
         }
