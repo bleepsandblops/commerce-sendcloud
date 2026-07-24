@@ -82,6 +82,7 @@ class OrderController extends Controller
 
             $settings = SendcloudPlugin::getInstance()->getSettings();
             Queue::push($job, $settings->pushOrderJobPriority);
+            usleep(250000);
         }
 
         Craft::$app->getSession()->setNotice(Craft::t('commerce-sendcloud', "Trying to push {count} orders to Sendcloud.", ['count' => count($orderIds)]));
