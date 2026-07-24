@@ -167,7 +167,7 @@ class OrderController extends Controller
                 }
 
                 $client = $plugin->sendcloudApi->getClient($storeId);
-                foreach (array_chunk(array_keys($statusesByOrderNumber), 20) as $orderNumberChunk) {
+                foreach (array_chunk(array_keys($statusesByOrderNumber), 10) as $orderNumberChunk) {
                     $response = $client->createLabels(
                         $orderNumberChunk,
                         $integration->externalId,
@@ -194,6 +194,7 @@ class OrderController extends Controller
                         $plugin->orderSync->saveOrderSyncStatus($status);
                         array_push($parcelIds, ...$newParcelIds);
                     }
+                    usleep(250000);
                 }
             }
 
