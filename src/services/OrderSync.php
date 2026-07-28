@@ -612,7 +612,7 @@ class OrderSync extends Component
         $sendcloudAddress = new \white\commerce\sendcloud\models\Address(
             name: $address->fullName ?: $address->getGivenName() . ' ' . $address->getFamilyName(),
             addressLine1: substr($address->getAddressLine1(), 0, 30),
-            postalCode: $address->getPostalCode(),
+            postalCode: $address->getPostalCode() ?? '',
             city: $locality,
             countryCode: $countryCode,
             companyName: substr($address->getOrganization(), 0, 30),
